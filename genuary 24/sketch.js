@@ -1,5 +1,5 @@
 const side = 800;
-const nb = 15; // nombre de carré par côté
+const nb = 45; // nombre de carré par côté
 const rap = side / nb; // taille de chaque carré
 const rap2 = rap * 0.5; // taille de chaque carré / 2
 
@@ -22,13 +22,13 @@ function draw() {
 
 function skwair(x, y) {
   push();
-  rand = random();
+  rand = random() *0.7;
   translate(x + rap2, y + rap2);
   rotate(rand * 45);
   translate(-x - rap2, -y - rap2);
-  fill(120, 100 * (1 - rand), 100 * (1 - rand));
+  fill(160, 100 , 100 * (1 - rand));
   noStroke();
-  rect(x, y, rap);
+  rect(x, y, rap*0.9);
   pop();
 }
 

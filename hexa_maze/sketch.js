@@ -1,67 +1,67 @@
-const side = 800;
-const nb = 5
+const side = 800; // w & h of canva
+const nb = 100 // number of hexagons in top line
+const thick = 0 ; // épaisseur entre chaque hexagone
+
+// Calcul des constantes géométriques
 const apo_thick = side / (2 * nb);
-const thick = 17;
 const apo = apo_thick - thick;
 const sq3 = Math.sqrt(3);
 const radius_thick = 2 * apo_thick / sq3;
 const radius_thick2 = radius_thick / 2;
 const radius = 2 * apo / sq3;
 const radius2 = radius / 2;
-var grad = 0
 
+// calcul du nombre d'hexagones par ligne et colone 
 const nb_rows = 2 * nb - 1;
 const nb_cols = nb
 
-var color_index = 0
+var grad = 0 // variables d'icrémentation du garient
+var color_index = 0 // couleur de la case
 
+// grille des cases hexagonales
 let grid = new Array(nb_rows).fill().map(() => new Array(nb_cols).fill());
 
-let start;
-let finish;
-let stack = [];
-let finished = false;
-let init = true
+let stack = []; // utilisé dans la création du "maze"
+
 
 function setup() {
   createCanvas(side, side);
   colorMode(HSB, 360, 100, 100, 250)
-  frameRate();
-  pixelDensity(1)
-  make_grid();
+
+  //frameRate();
+
+  make_grid(); // création de la grille
+
+  // selection de la case de départ
+  var a = Math.floor(nb_rows / 2)
+  if (a % 2) { a += 1 }
+  stack = [grid[a][a - 2]]
 }
 
 function draw() {
-
-  if (init){
-    var a = Math.floor(nb_rows / 2)
-    if (a % 2) { a += 1 }
-    stack = [grid[a][a - 2]]
-    init = false;
-  } else { 
-    var current_cell = stack[stack.length - 1]
-    if (!current_cell.visited){
-      draw_inner_hex(current_cell);
-      current_cell.visited = true;
+  var current_cell = stack[stack.length - 1]
+  if (!current_cell.visited) {
+    draw_hex(current_cell);
+    current_cell.visited = true;
+  }
+  var next_cell_index = get_random_unvisited_neighbour(current_cell);
+  if (next_cell_index == -1) {
+    stack.pop()
+    if (stack.length == 0) {
+      stopp
     }
-    var next_cell_index = get_random_unvisited_neighbour(current_cell);
-    if (next_cell_index == -1) {
-      stack.pop()
-      if (stack.length == 0){
-        stopp
-      }
-    } else {
-      open(current_cell, next_cell_index);
-      var l = current_cell.links[next_cell_index]
-      stack.push(grid[l[0]][l[1]]);
-    }
+  } else {
+    open(current_cell, next_cell_index);
+    var l = current_cell.links[next_cell_index]
+    stack.push(grid[l[0]][l[1]]);
   }
 }
 
-function draw_inner_hex(hex) {
+// pour dessiner un hexagone
+function draw_hex(hex) {
   const p = get_points(hex.x, hex.y);
   noStroke()
-  fill(color_index, 25 + color_index%75, 50 + color_index%50);
+  fill(color_index, 25 + color_index % 75, 50 + color_index % 50);
 
   beginShape();
   vertex(p[0][0], p[0][1])
@@ -75,18 +75,20 @@ function draw_inner_hex(hex) {
   color_index += grad;
 }
 
-function count_cells(){
+// pour compter le nombre de cells au total dans la grille
+function count_cells() {
   var cnt = 0;
   grid.forEach(i => {
     i.forEach(j => {
-      if (j !== undefined){
-        cnt+=1
+      if (j !== undefined) {
+        cnt += 1
       }
     });
   });
   return cnt;
 }
 
+// pour obtenir les points d'un hexagone basé sur son centre
 function get_points(x, y) {
   return [
     [x - apo, y - radius2],
@@ -98,6 +100,7 @@ function get_points(x, y) {
   ]
 }
 
+// pour créer la grille
 function make_grid() {
   for (var i = 0; i < nb_rows; i++) {
     for (var j = (i % 2); j < nb_cols; j += 2) {
@@ -128,9 +131,10 @@ function make_grid() {
       }
     }
   }
-  grad = 360/count_cells()
+  grad = 360 / count_cells()
 }
 
+// pour créer l'objet hexagone
 function make_hex(i, j) {
   return {
     i: i,
@@ -143,6 +147,7 @@ function make_hex(i, j) {
   }
 }
 
+// pour obtenir un hexagone voisin non visité
 function get_random_unvisited_neighbour(hex) {
   var fails = 0;
   var n = Math.floor(random(0, hex.links.length));
@@ -158,6 +163,7 @@ function get_random_unvisited_neighbour(hex) {
   return -1
 }
 
+// pour indiquer quel chemin est déjà pris
 function open(hex, n) {
   var index = hex.links[n]
   var door = -1;

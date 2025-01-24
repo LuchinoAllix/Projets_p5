@@ -1,5 +1,5 @@
 const side = 800; // w & h of canva
-const nb = 100 // number of hexagons in top line
+const nb = 50 // number of hexagons in top line
 const thick = 0 ; // épaisseur entre chaque hexagone
 
 // Calcul des constantes géométriques
@@ -61,7 +61,7 @@ function draw() {
 function draw_hex(hex) {
   const p = get_points(hex.x, hex.y);
   noStroke()
-  fill(color_index, 25 + color_index % 75, 50 + color_index % 50);
+  fill(color_index, 25 + color_index % 75, 60 + color_index % 40);
 
   beginShape();
   vertex(p[0][0], p[0][1])

@@ -42,6 +42,7 @@ var notes = [doo,ree,mii,faa,sol,laa,sii]
 var all_notes = []
 
 const fr = 42;
+var frame = 0
 
 function setup() {
   createCanvas(side, side);
@@ -81,6 +82,7 @@ function draw() {
   if (isPlaying) {
     draw_next()
   }
+  frame++;
 }
 
 function make_all_notes(){
@@ -125,7 +127,7 @@ function draw_next() {
 }
 
 function play_note() {
-  var freq = all_notes[note_index]
+  var freq = all_notes[Math.floor(noise(frame)*all_notes.length)]
   console.log(note_index)
   osc1.freq(freq);
   osc2.freq(freq / octave);

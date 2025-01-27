@@ -1,6 +1,6 @@
 const side = 800; // w & h of canva
 const nb = 50 // number of hexagons in top line
-const thick = 0 ; // épaisseur entre chaque hexagone
+const thick = 0; // épaisseur entre chaque hexagone
 
 // Calcul des constantes géométriques
 const apo_thick = side / (2 * nb);
@@ -26,14 +26,22 @@ let stack = []; // utilisé dans la création du "maze"
 let osc1, osc2;
 let isPlaying = false;
 
-var laa = 440/3;
-var doo = 261.63/2
-var mii = 329.63/2
-var notes = [doo,mii]
+const octave = 1.05946;
+
+
+var doo = 261.63
+var ree = 293.66
+var mii = 329.63
+var faa = 349.23
+var sol = 392.00
+var laa = 440.00
+var sii = 493.88
+
+var note_index = 1;
+var notes = [doo,ree,mii,faa,sol,laa,sii]
+var all_notes = []
 
 const fr = 42;
-const perdiode = 1/fr
-
 
 function setup() {
   createCanvas(side, side);
@@ -42,16 +50,17 @@ function setup() {
   frameRate(fr);
 
   osc1 = new p5.Oscillator('triangle');
-  osc2 = new p5.Oscillator('sine'); 
+  osc2 = new p5.Oscillator('sine');
 
   make_grid(); // création de la grille
   init()
-
+  console.log(all_notes)
 }
 
+// Démarre les oscillateurs lors du clic
 function mousePressed() {
   if (!isPlaying) {
-    osc1.start();  // Démarre l'oscillateur lors du clic
+    osc1.start();
     osc2.start()
     osc1.amp(0, 0)
     osc2.amp(0, 0)
@@ -59,26 +68,46 @@ function mousePressed() {
   }
 }
 
-
-function init(){
+function init() {
   // selection de la case de départ
-  var a = Math.floor(nb_rows / 2)
+  var a = Math.floor(random(2, nb_rows) / 2)
   if (a % 2) { a += 1 }
+  console.log(a)
   stack = [grid[a][a - 2]]
+  make_all_notes()
 }
 
 function draw() {
-  if(isPlaying){
+  if (isPlaying) {
     draw_next()
   }
 }
 
-function draw_next(){
+function make_all_notes(){
+  for(i=2; i>0;i--){
+    for(j=0;j<notes.length;j++){
+      all_notes.push(notes[j] / (octave * i))
+    }
+  }
+  for(j=0;j<notes.length;j++){
+    all_notes.push(notes[j] )
+  }
+  for(i=1; i<3;i++){
+    for(j=0;j<notes.length;j++){
+      all_notes.push(notes[j] * (octave * i))
+    }
+  }
+}
+
+function draw_next() {
   var current_cell = stack[stack.length - 1]
   if (!current_cell.visited) {
     draw_hex(current_cell);
     play_note();
     current_cell.visited = true;
+  } else {
+    osc1.amp(0.3, 0.1)
+    osc2.amp(0.1, 0.1)
   }
   var next_cell_index = get_random_unvisited_neighbour(current_cell);
   if (next_cell_index == -1) {
@@ -86,7 +115,7 @@ function draw_next(){
     if (stack.length == 0) {
       osc1.stop()
       osc2.stop()
-      stopp
+      stopp // error pour stop
     }
   } else {
     open(current_cell, next_cell_index);
@@ -95,14 +124,27 @@ function draw_next(){
   }
 }
 
-function play_note(){
-  var r = Math.floor(random(notes.length))
-  var freq = notes[r]*Math.floor(random(1,4))*1.059 ;
+function play_note() {
+  var freq = all_notes[note_index]
+  console.log(note_index)
   osc1.freq(freq);
-  osc2.freq(freq/2);
-  osc1.amp(0.6,0.1); // Amplitude de la note
-  osc2.amp(0.3,0.1); // Amplitude de la note
+  osc2.freq(freq / octave);
+  osc1.amp(0.6, 0.1);
+  osc2.amp(0.3, 0.1);
+
+  if(random()>0.5){
+    note_index++;
+    if (note_index>=all_notes.length){
+      note_index-=2;
+    }
+  } else {
+    note_index--;
+    if (note_index<0){
+      note_index+=2;
+    }
+  }
 }
+
 
 // pour dessiner un hexagone
 function draw_hex(hex) {

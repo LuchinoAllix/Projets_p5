@@ -37,11 +37,10 @@ var sol = 392.00
 var laa = 440.00
 var sii = 493.88
 
-var note_index = 1;
-var notes = [doo,ree,mii,faa,sol,laa,sii]
+var notes = [doo,mii,sol]
 var all_notes = []
 
-const fr = 42;
+const fr = 21;
 var frame = 0
 
 function setup() {
@@ -82,7 +81,7 @@ function draw() {
   if (isPlaying) {
     draw_next()
   }
-  frame++;
+  frame+=0.5;
 }
 
 function make_all_notes(){
@@ -127,24 +126,14 @@ function draw_next() {
 }
 
 function play_note() {
-  var freq = all_notes[Math.floor(noise(frame)*all_notes.length)]
-  console.log(note_index)
+  //Math.floor(noise(frame)*all_notes.length)
+  var perlin = Math.floor(random(all_notes.length))
+  console.log(perlin)
+  var freq = all_notes[perlin]
   osc1.freq(freq);
   osc2.freq(freq / octave);
   osc1.amp(0.6, 0.1);
   osc2.amp(0.3, 0.1);
-
-  if(random()>0.5){
-    note_index++;
-    if (note_index>=all_notes.length){
-      note_index-=2;
-    }
-  } else {
-    note_index--;
-    if (note_index<0){
-      note_index+=2;
-    }
-  }
 }
 
 

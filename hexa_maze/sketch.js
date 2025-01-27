@@ -23,15 +23,44 @@ let grid = new Array(nb_rows).fill().map(() => new Array(nb_cols).fill());
 
 let stack = []; // utilisé dans la création du "maze"
 
+let osc1, osc2;
+let isPlaying = false;
+
+var laa = 440/3;
+var doo = 261.63/2
+var mii = 329.63/2
+var notes = [doo,mii]
+
+const fr = 42;
+const perdiode = 1/fr
+
 
 function setup() {
   createCanvas(side, side);
   colorMode(HSB, 360, 100, 100, 250)
 
-  //frameRate();
+  frameRate(fr);
+
+  osc1 = new p5.Oscillator('triangle');
+  osc2 = new p5.Oscillator('sine'); 
 
   make_grid(); // création de la grille
+  init()
 
+}
+
+function mousePressed() {
+  if (!isPlaying) {
+    osc1.start();  // Démarre l'oscillateur lors du clic
+    osc2.start()
+    osc1.amp(0, 0)
+    osc2.amp(0, 0)
+    isPlaying = true;
+  }
+}
+
+
+function init(){
   // selection de la case de départ
   var a = Math.floor(nb_rows / 2)
   if (a % 2) { a += 1 }
@@ -39,15 +68,24 @@ function setup() {
 }
 
 function draw() {
+  if(isPlaying){
+    draw_next()
+  }
+}
+
+function draw_next(){
   var current_cell = stack[stack.length - 1]
   if (!current_cell.visited) {
     draw_hex(current_cell);
+    play_note();
     current_cell.visited = true;
   }
   var next_cell_index = get_random_unvisited_neighbour(current_cell);
   if (next_cell_index == -1) {
     stack.pop()
     if (stack.length == 0) {
+      osc1.stop()
+      osc2.stop()
       stopp
     }
   } else {
@@ -55,6 +93,15 @@ function draw() {
     var l = current_cell.links[next_cell_index]
     stack.push(grid[l[0]][l[1]]);
   }
+}
+
+function play_note(){
+  var r = Math.floor(random(notes.length))
+  var freq = notes[r]*Math.floor(random(1,4))*1.059 ;
+  osc1.freq(freq);
+  osc2.freq(freq/2);
+  osc1.amp(0.6,0.1); // Amplitude de la note
+  osc2.amp(0.3,0.1); // Amplitude de la note
 }
 
 // pour dessiner un hexagone

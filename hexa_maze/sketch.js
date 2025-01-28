@@ -25,9 +25,9 @@ let stack = []; // utilisé dans la création du "maze"
 
 let osc1, osc2;
 let isPlaying = false;
+let duration = 0;
 
 const octave = 1.05946;
-
 
 var doo = 261.63
 var ree = 293.66
@@ -40,8 +40,7 @@ var sii = 493.88
 var notes = [doo,mii,sol]
 var all_notes = []
 
-const fr = 21;
-var frame = 0
+const fr = 42;
 
 function setup() {
   createCanvas(side, side);
@@ -49,7 +48,7 @@ function setup() {
 
   frameRate(fr);
 
-  osc1 = new p5.Oscillator('triangle');
+  osc1 = new p5.Oscillator('sine');
   osc2 = new p5.Oscillator('sine');
 
   make_grid(); // création de la grille
@@ -81,7 +80,7 @@ function draw() {
   if (isPlaying) {
     draw_next()
   }
-  frame+=0.5;
+  duration--;
 }
 
 function make_all_notes(){
@@ -93,7 +92,7 @@ function make_all_notes(){
   for(j=0;j<notes.length;j++){
     all_notes.push(notes[j] )
   }
-  for(i=1; i<3;i++){
+  for(i=1; i<2;i++){
     for(j=0;j<notes.length;j++){
       all_notes.push(notes[j] * (octave * i))
     }
@@ -104,7 +103,9 @@ function draw_next() {
   var current_cell = stack[stack.length - 1]
   if (!current_cell.visited) {
     draw_hex(current_cell);
-    play_note();
+    if(duration <= 0){
+      play_note();
+    }
     current_cell.visited = true;
   } else {
     osc1.amp(0.3, 0.1)
@@ -126,14 +127,13 @@ function draw_next() {
 }
 
 function play_note() {
-  //Math.floor(noise(frame)*all_notes.length)
-  var perlin = Math.floor(random(all_notes.length))
-  console.log(perlin)
-  var freq = all_notes[perlin]
+  duration = 5 + Math.floor(random(6))
+  var r = Math.floor(random(all_notes.length))
+  var freq = all_notes[r]
   osc1.freq(freq);
   osc2.freq(freq / octave);
-  osc1.amp(0.6, 0.1);
-  osc2.amp(0.3, 0.1);
+  osc1.amp(0.5, 0.1);
+  osc2.amp(0.25, 0.1);
 }
 
 

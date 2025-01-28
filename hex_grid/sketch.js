@@ -39,6 +39,7 @@ var sii = 493.88
 
 var notes = [doo, mii, sol] // notes choisies
 var all_notes = [] // toutes les notes (octaves au dessus et en dessous) 
+var started = false;
 
 const fr = 42; // frame rate
 
@@ -54,6 +55,7 @@ function setup() {
     start();
     createCanvas(side, side);
     button.hide();
+    started = true
   });
 
   colorMode(HSB, 360, 100, 100, 250)
@@ -62,8 +64,10 @@ function setup() {
 }
 
 function draw() {
-  draw_next()
-  duration--;
+  if (started){
+    draw_next()
+    duration--;
+  }
 }
 
 // Démarre les oscillateurs lors du clic

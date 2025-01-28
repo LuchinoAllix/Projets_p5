@@ -24,7 +24,7 @@ let grid = new Array(nb_rows).fill().map(() => new Array(nb_cols).fill());
 let stack = []; // utilisé dans la création du "maze"
 
 let osc1, osc2; // oscilateurs
-let duration = 0; // durée qu'un note est jouée (en frames)
+let duration = 0; // durée qu'une note est jouée (en frames)
 
 const octave = 1.05946;
 
@@ -43,7 +43,8 @@ var all_notes = [] // toutes les notes (octaves au dessus et en dessous)
 const fr = 42; // frame rate
 
 function setup() {
-  createCanvas(0, 0);
+  createCanvas(0, 0); 
+  // pour pas avoir le default canvas et pouvoir centrer le bouton
 
   osc1 = new p5.Oscillator('sine');
   osc2 = new p5.Oscillator('sine');

@@ -23,12 +23,12 @@ let grid = new Array(nb_rows).fill().map(() => new Array(nb_cols).fill());
 
 let stack = []; // utilisé dans la création du "maze"
 
-let osc1, osc2;
-let isPlaying = false;
-let duration = 0;
+let osc1, osc2; // oscilateurs
+let duration = 0; // durée qu'un note est jouée (en frames)
 
 const octave = 1.05946;
 
+// fréquence des notes
 var doo = 261.63
 var ree = 293.66
 var mii = 329.63
@@ -37,79 +37,83 @@ var sol = 392.00
 var laa = 440.00
 var sii = 493.88
 
-var notes = [doo,mii,sol]
-var all_notes = []
+var notes = [doo, mii, sol] // notes choisies
+var all_notes = [] // toutes les notes (octaves au dessus et en dessous) 
 
-const fr = 42;
+const fr = 42; // frame rate
 
 function setup() {
-  createCanvas(0,0);
-  
+  createCanvas(0, 0);
+
   osc1 = new p5.Oscillator('sine');
   osc2 = new p5.Oscillator('sine');
-  
-  const button = select('#startButton');
+
+  const button = select('#startButton'); // run quand on appuie sur le bouton
   button.mousePressed(() => {
     start();
     createCanvas(side, side);
     button.hide();
   });
-  
+
   colorMode(HSB, 360, 100, 100, 250)
-  init()
   frameRate(fr);
+  init()
+}
+
+function draw() {
+  draw_next()
+  duration--;
 }
 
 // Démarre les oscillateurs lors du clic
 function start() {
-  if (!isPlaying) {
-    osc1.start();
-    osc2.start()
-    osc1.amp(0, 0)
-    osc2.amp(0, 0)
-    isPlaying = true;
-  }
+  osc1.start();
+  osc2.start()
+  osc1.amp(0, 0)
+  osc2.amp(0, 0)
 }
 
+// initiation de la grille
 function init() {
+
   make_grid(); // création de la grille
 
   // selection de la case de départ
   var a = Math.floor(random(2, nb_rows) / 2)
   if (a % 2) { a += 1 }
-  console.log(a)
-  stack = [grid[a][a - 2]]
-  make_all_notes()
+
+  stack = [grid[a][a - 2]] // ajout au stack de la case de départ
+
+  make_all_notes() // création des notes jouables
 }
 
-function draw() {
-  if (isPlaying) {
-    draw_next()
-  }
-  duration--;
-}
-
-function make_all_notes(){
-  for(i=2; i>0;i--){
-    for(j=0;j<notes.length;j++){
-      all_notes.push(notes[j] / (octave * i))
+// création de la liste de toutes les notes (dans l'ordre) 
+// (octaves au dessus et en dessous)
+function make_all_notes() {
+  for (i = 2; i > 0; i--) { // pour deux octaves en dessous
+    for (j = 0; j < notes.length; j++) { // pour chaque note choises
+      all_notes.push(notes[j] / (octave * i)) 
+      // division pour les octaves plus basses
     }
   }
-  for(j=0;j<notes.length;j++){
-    all_notes.push(notes[j] )
+  for (j = 0; j < notes.length; j++) { //notes choises
+    all_notes.push(notes[j])
   }
-  for(i=1; i<2;i++){
-    for(j=0;j<notes.length;j++){
-      all_notes.push(notes[j] * (octave * i))
+  for (i = 1; i < 2; i++) { // pour les octaves au dessus
+    for (j = 0; j < notes.length; j++) {
+      all_notes.push(notes[j] * (octave * i)) 
+      // multiplication pour les octaves plus hautes
     }
   }
 }
 
+
+// dessine le prochain hex et joue une note (si possible)
 function draw_next() {
   var current_cell = stack[stack.length - 1]
   if (!current_cell.visited) {
     draw_hex(current_cell);
-    if(duration <= 0){
+    if (duration <= 0) {
       play_note();
     }
     current_cell.visited = true;
@@ -123,7 +127,7 @@ function draw_next() {
     if (stack.length == 0) {
       osc1.stop()
       osc2.stop()
-      stopp // error pour stop
+      noLoop()
     }
   } else {
     open(current_cell, next_cell_index);
@@ -133,6 +137,7 @@ function draw_next() {
 }
 
 function play_note() {
+  // joue une note aléatoire pour une durée aléatoire
   duration = 5 + Math.floor(random(6))
   var r = Math.floor(random(all_notes.length))
   var freq = all_notes[r]
@@ -162,6 +167,7 @@ function draw_hex(hex) {
 }
 
 // pour compter le nombre de cells au total dans la grille
+// utile pour le gradient
 function count_cells() {
   var cnt = 0;
   grid.forEach(i => {
@@ -227,8 +233,8 @@ function make_hex(i, j) {
     j: j,
     x: (i + 1) * apo_thick,
     y: apo_thick * 2 / sq3 + j * (apo_thick * 2 / sq3 + radius_thick2),
-    walls: [true, true, true, true, true, true],
-    links: [],
+    walls: [true, true, true, true, true, true], // chemins vers les voisins
+    links: [], // voisins
     visited: false
   }
 }

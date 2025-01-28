@@ -43,21 +43,25 @@ var all_notes = []
 const fr = 42;
 
 function setup() {
-  createCanvas(side, side);
-  colorMode(HSB, 360, 100, 100, 250)
-
-  frameRate(fr);
-
+  createCanvas(0,0);
+  
   osc1 = new p5.Oscillator('sine');
   osc2 = new p5.Oscillator('sine');
-
-  make_grid(); // création de la grille
+  
+  const button = select('#startButton');
+  button.mousePressed(() => {
+    start();
+    createCanvas(side, side);
+    button.hide();
+  });
+  
+  colorMode(HSB, 360, 100, 100, 250)
   init()
-  console.log(all_notes)
+  frameRate(fr);
 }
 
 // Démarre les oscillateurs lors du clic
-function mousePressed() {
+function start() {
   if (!isPlaying) {
     osc1.start();
     osc2.start()
@@ -68,6 +72,8 @@ function mousePressed() {
 }
 
 function init() {
+  make_grid(); // création de la grille
+
   // selection de la case de départ
   var a = Math.floor(random(2, nb_rows) / 2)
   if (a % 2) { a += 1 }
@@ -108,8 +114,8 @@ function draw_next() {
     }
     current_cell.visited = true;
   } else {
-    osc1.amp(0.3, 0.1)
-    osc2.amp(0.1, 0.1)
+    osc1.amp(0.25, 0.2)
+    osc2.amp(0.125, 0.2)
   }
   var next_cell_index = get_random_unvisited_neighbour(current_cell);
   if (next_cell_index == -1) {
@@ -132,8 +138,8 @@ function play_note() {
   var freq = all_notes[r]
   osc1.freq(freq);
   osc2.freq(freq / octave);
-  osc1.amp(0.5, 0.1);
-  osc2.amp(0.25, 0.1);
+  osc1.amp(0.5, 0.2);
+  osc2.amp(0.25, 0.2);
 }
 
 

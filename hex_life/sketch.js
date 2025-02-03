@@ -1,6 +1,6 @@
 const side = 800; // w & h of canva
-const nb = 55 // number of hexagons in top line
-const thick = 0; // épaisseur entre chaque hexagone
+const nb = 25 // number of hexagons in top line
+const thick = 0.2; // épaisseur entre chaque hexagone
 
 // Calcul des constantes géométriques
 const apo_thick = side / (2 * nb);
@@ -21,7 +21,7 @@ var color_index = 0 // couleur de la case
 // grille des cases hexagonales
 let grid = new Array(nb_rows).fill().map(() => new Array(nb_cols).fill());
 
-const fr = 60; // frame rate
+const fr = 0.2; // frame rate
 var started = false ;
 
 function setup() {
@@ -30,7 +30,7 @@ function setup() {
   
   colorMode(HSB, 360, 100, 100, 250)
   //noLoop()
-  frameRate(10)
+  frameRate(fr)
   const button = select('#startButton'); // run quand on appuie sur le bouton
   button.mousePressed(() => {
     createCanvas(side, side);
@@ -43,9 +43,9 @@ function setup() {
 
 function draw() {
   if (started){
-    circle(100,100,50)
-    
     draw_grid()
+    update_all()
+    //noLoop()
   }
 }
 
@@ -53,13 +53,15 @@ function start(){
   started = true
 }
 
-
 // pour dessiner un hexagone
 function draw_hex(hex) {
   const p = hex.points ;
   noStroke()
-  fill(color_index, 25 + color_index % 75, 60 + color_index % 40);
-  circle(hex.x,hex.y,5)
+  if (hex.alive){
+    fill("red")
+  } else {
+    fill("black");
+  }
 
   beginShape();
   vertex(p[0][0], p[0][1])
@@ -69,15 +71,16 @@ function draw_hex(hex) {
   vertex(p[4][0], p[4][1])
   vertex(p[5][0], p[5][1])
   endShape();
-
-  color_index += grad;
+  
+  fill("white")
+  text(update_cell(hex),hex.x,hex.y)
+  
 }
 
 function draw_grid(){
   grid.forEach(i => {
     i.forEach(j => {
       if (j !== undefined) {
-        console.log(j)
         draw_hex(j);
       }
     });
@@ -148,13 +151,42 @@ function make_grid() {
 function make_hex(i, j) {
   var x = (i + 1) * apo_thick
   var y = apo_thick * 2 / sq3 + j * (apo_thick * 2 / sq3 + radius_thick2)
+  var alive = false ;
+  if (random()*i/j< 0.5){
+    alive = true;
+  }
   return {
     i: i,
     j: j,
     x: x,
     y: y,
     links: [],
-    alive: false,
+    alive: alive,
     points: get_points(x,y)
   }
+}
+
+function update_cell(cell){
+  var cnt = 0
+  cell.links.forEach(link => {
+    if (grid[link[0]][link[1]].alive){
+      cnt +=1
+    }
+  });
+  if (cnt == 2 || cnt == 4){
+    cell.alive=true;
+  } else {
+    cell.alive=false;
+  }
+  return cnt;
+}
+
+function update_all(){
+  grid.forEach(i => {
+    i.forEach(j => {
+      if (j !== undefined) {
+        update_cell(j);
+      }
+    });
+  });
 }

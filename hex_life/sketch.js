@@ -1,5 +1,5 @@
 const side = 800; // w & h of canva
-const nb = 25 // number of hexagons in top line
+const nb = 100 // number of hexagons in top line
 
 
 // Calcul des constantes géométriques
@@ -17,16 +17,16 @@ var pos = 0 // position dans la liste 'alive' (états)
 // grille des cases hexagonales
 let grid = new Array(nb_rows).fill().map(() => new Array(nb_cols).fill());
 
-const fr = 5; // frame rate
-var started = false ;
+const fr = 3; // frame rate
+var started = false;
 
 function setup() {
-  createCanvas(0, 0); 
+  createCanvas(0, 0);
   // pour pas avoir le default canvas et pouvoir centrer le bouton
-  
+
   colorMode(HSB, 360, 100, 100, 250)
   frameRate(fr)
-  
+
   const button = select('#startButton'); // run quand on appuie sur le bouton
   button.mousePressed(() => {
     createCanvas(side, side);
@@ -39,24 +39,25 @@ function setup() {
 }
 
 function draw() {
-  if (started){
+  if (started) {
     draw_grid()
     update_all()
   }
 }
 
-function start(){
+function start() {
   started = true
 }
 
 // pour dessiner un hexagone
 function draw_hex(hex) {
-  const p = hex.points ;
+  const p = hex.points;
   stroke("white")
-  if (hex.alive[pos]){
+  strokeWeight(0.5)
+  if (hex.alive[pos]) {
     fill("green")
   } else {
-    fill("grey");
+    fill("white");
   }
 
   beginShape();
@@ -67,10 +68,10 @@ function draw_hex(hex) {
   vertex(p[4][0], p[4][1])
   vertex(p[5][0], p[5][1])
   endShape();
-  
+
 }
 
-function draw_grid(){
+function draw_grid() {
   grid.forEach(i => {
     i.forEach(j => {
       if (j !== undefined) {
@@ -123,7 +124,6 @@ function make_grid() {
       }
     }
   }
-  grad = 360 / count_cells()
 }
 
 // pour créer l'objet hexagone
@@ -136,31 +136,62 @@ function make_hex(i, j) {
     x: x,
     y: y,
     links: [],
-    alive: [false,false],
-    points: get_points(x,y)
+    alive: [false, false],
+    points: get_points(x, y)
   }
 }
 
-function initiate(){
-  //todo
+function initiate() {
+  var ci = Math.floor(nb_rows / 2)
+  var cj = Math.floor(nb_cols / 2)
+  if(ci%2){
+    if(!(cj%2)){
+      cj++
+    }
+  } else {
+    if((cj%2)){
+      cj++
+    }
+  }
+  console.log(ci + " " + cj)
+  if (random()> 0.5){
+    grid[ci][cj].alive[0] = true // center
+  }
+  var is = []
+  var js = []
+  for (let a = 0; a < random(5,10); a++) {
+    let i = Math.floor(random(8))
+    let j = random([0,2,4,6,8])
+    if(i%2){j++}
+    if (!is.includes(i) || !js.includes(j)){
+      grid[ci - i][cj - j].alive[0] = true
+      grid[ci + i][cj - j].alive[0] = true
+      if (j!=cj){
+        grid[ci - i][cj + j].alive[0] = true
+        grid[ci + i][cj + j].alive[0] = true
+      }
+    }
+    is.push(i)
+    js.push(j)
+  }
 }
 
-function update_cell(cell){
+function update_cell(cell) {
   var cnt = 0
   cell.links.forEach(link => {
-    if (grid[link[0]][link[1]].alive[pos]){
-      cnt +=1
+    if (grid[link[0]][link[1]].alive[pos]) {
+      cnt += 1
     }
   });
-  if (cnt >= 2 && cnt < 5){
-    cell.alive[(pos+1)%2]=true;
+  if (cnt >= 2 && cnt < 5) {
+    cell.alive[(pos + 1) % 2] = true;
   } else {
-    cell.alive[(pos+1)%2]=false;
+    cell.alive[(pos + 1) % 2] = false;
   }
   return cnt;
 }
 
-function update_all(){
+function update_all() {
   grid.forEach(i => {
     i.forEach(j => {
       if (j !== undefined) {
@@ -168,5 +199,5 @@ function update_all(){
       }
     });
   });
-  pos = (pos + 1)%2
+  pos = (pos + 1) % 2
 }

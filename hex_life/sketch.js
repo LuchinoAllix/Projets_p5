@@ -1,6 +1,6 @@
 const side = 800; // w & h of canva
-const nb = 25 // number of hexagons in top line
-const thick = 0.2; // épaisseur entre chaque hexagone
+const nb = 100 // number of hexagons in top line
+const thick = 0.3; // épaisseur entre chaque hexagone
 
 // Calcul des constantes géométriques
 const apo_thick = side / (2 * nb);
@@ -18,10 +18,12 @@ const nb_cols = nb
 var grad = 0 // variables d'icrémentation du garient
 var color_index = 0 // couleur de la case
 
+var pos = 0
+
 // grille des cases hexagonales
 let grid = new Array(nb_rows).fill().map(() => new Array(nb_cols).fill());
 
-const fr = 0.2; // frame rate
+const fr = 5; // frame rate
 var started = false ;
 
 function setup() {
@@ -57,10 +59,10 @@ function start(){
 function draw_hex(hex) {
   const p = hex.points ;
   noStroke()
-  if (hex.alive){
-    fill("red")
+  if (hex.alive[pos]){
+    fill("green")
   } else {
-    fill("black");
+    fill("grey");
   }
 
   beginShape();
@@ -73,7 +75,7 @@ function draw_hex(hex) {
   endShape();
   
   fill("white")
-  text(update_cell(hex),hex.x,hex.y)
+  //text(update_cell(hex),hex.x,hex.y)
   
 }
 
@@ -152,7 +154,7 @@ function make_hex(i, j) {
   var x = (i + 1) * apo_thick
   var y = apo_thick * 2 / sq3 + j * (apo_thick * 2 / sq3 + radius_thick2)
   var alive = false ;
-  if (random()*i/j< 0.5){
+  if (random()<0.025){
     alive = true;
   }
   return {
@@ -161,7 +163,7 @@ function make_hex(i, j) {
     x: x,
     y: y,
     links: [],
-    alive: alive,
+    alive: [alive,false],
     points: get_points(x,y)
   }
 }
@@ -169,14 +171,14 @@ function make_hex(i, j) {
 function update_cell(cell){
   var cnt = 0
   cell.links.forEach(link => {
-    if (grid[link[0]][link[1]].alive){
+    if (grid[link[0]][link[1]].alive[pos]){
       cnt +=1
     }
   });
-  if (cnt == 2 || cnt == 4){
-    cell.alive=true;
+  if (cnt == 2){
+    cell.alive[(pos+1)%2]=true;
   } else {
-    cell.alive=false;
+    cell.alive[(pos+1)%2]=false;
   }
   return cnt;
 }
@@ -189,4 +191,5 @@ function update_all(){
       }
     });
   });
+  pos = (pos + 1)%2
 }

@@ -1,6 +1,7 @@
 const side = 800; // w & h of canva
-const nb = 100 // number of hexagons in top line
+const nb = 36 // number of hexagons in top line
 
+const fr = 5; // frame rate
 
 // Calcul des constantes géométriques
 const apo = side / (2 * nb);
@@ -16,9 +17,11 @@ var pos = 0 // position dans la liste 'alive' (états)
 
 // grille des cases hexagonales
 let grid = new Array(nb_rows).fill().map(() => new Array(nb_cols).fill());
-
-const fr = 3; // frame rate
 var started = false;
+
+var nb_iteration = 0;
+var max_nb_iteration = 100;
+
 
 function setup() {
   createCanvas(0, 0);
@@ -33,16 +36,23 @@ function setup() {
     button.hide();
     start()
   });
+  max_nb_iteration = random(nb/2,nb);
+  console.log(max_nb_iteration);
 
   make_grid()
   initiate()
 }
 
 function draw() {
+  background("black")
   if (started) {
     draw_grid()
     update_all()
-  }
+    if (nb_iteration >= max_nb_iteration){
+      noLoop()
+    }
+    nb_iteration++;
+  } 
 }
 
 function start() {
@@ -52,22 +62,22 @@ function start() {
 // pour dessiner un hexagone
 function draw_hex(hex) {
   const p = hex.points;
-  stroke("white")
-  strokeWeight(0.5)
-  if (hex.alive[pos]) {
-    fill("green")
-  } else {
-    fill("white");
-  }
 
-  beginShape();
-  vertex(p[0][0], p[0][1])
-  vertex(p[1][0], p[1][1])
-  vertex(p[2][0], p[2][1])
-  vertex(p[3][0], p[3][1])
-  vertex(p[4][0], p[4][1])
-  vertex(p[5][0], p[5][1])
-  endShape();
+  //strokeWeight(2)
+  //stroke(colorStroke)
+  noStroke()
+  if (hex.alive[pos]) {
+    fill(270+random(-30,30),90+random(-10,10),70+random(-10,10))
+    
+    beginShape();
+    vertex(p[0][0], p[0][1])
+    vertex(p[1][0], p[1][1])
+    vertex(p[2][0], p[2][1])
+    vertex(p[3][0], p[3][1])
+    vertex(p[4][0], p[4][1])
+    vertex(p[5][0], p[5][1])
+    endShape();
+  } 
 
 }
 
@@ -146,29 +156,31 @@ function initiate() {
   var cj = Math.floor(nb_cols / 2)
   if(ci%2){
     if(!(cj%2)){
-      cj++
+      cj--
     }
   } else {
     if((cj%2)){
-      cj++
+      cj--
     }
   }
-  console.log(ci + " " + cj)
+
   if (random()> 0.5){
     grid[ci][cj].alive[0] = true // center
   }
   var is = []
   var js = []
-  for (let a = 0; a < random(5,10); a++) {
+  for (let a = 0; a < random(5,7); a++) {
     let i = Math.floor(random(8))
     let j = random([0,2,4,6,8])
     if(i%2){j++}
     if (!is.includes(i) || !js.includes(j)){
       grid[ci - i][cj - j].alive[0] = true
       grid[ci + i][cj - j].alive[0] = true
-      if (j!=cj){
-        grid[ci - i][cj + j].alive[0] = true
-        grid[ci + i][cj + j].alive[0] = true
+      if(random()>0.5){
+        if (j!=cj){
+          grid[ci - i][cj + j].alive[0] = true
+          grid[ci + i][cj + j].alive[0] = true
+        }
       }
     }
     is.push(i)
@@ -183,12 +195,19 @@ function update_cell(cell) {
       cnt += 1
     }
   });
-  if (cnt >= 2 && cnt < 5) {
-    cell.alive[(pos + 1) % 2] = true;
+  if (cell.alive[pos]){
+    if (cnt < 2 || cnt > 3) {
+      cell.alive[(pos + 1) % 2] = false;
+    } else {
+      cell.alive[(pos + 1) % 2] = true;
+    }
   } else {
-    cell.alive[(pos + 1) % 2] = false;
-  }
-  return cnt;
+    if (cnt == 2) {
+      cell.alive[(pos + 1) % 2] = true;
+    } else {
+      cell.alive[(pos + 1) % 2] = false;
+    }
+  } 
 }
 
 function update_all() {

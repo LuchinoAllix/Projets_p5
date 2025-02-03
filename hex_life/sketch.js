@@ -1,13 +1,10 @@
 const side = 800; // w & h of canva
-const nb = 100 // number of hexagons in top line
-const thick = 0.3; // épaisseur entre chaque hexagone
+const nb = 25 // number of hexagons in top line
+
 
 // Calcul des constantes géométriques
-const apo_thick = side / (2 * nb);
-const apo = apo_thick - thick;
+const apo = side / (2 * nb);
 const sq3 = Math.sqrt(3);
-const radius_thick = 2 * apo_thick / sq3;
-const radius_thick2 = radius_thick / 2;
 const radius = 2 * apo / sq3;
 const radius2 = radius / 2;
 
@@ -15,10 +12,7 @@ const radius2 = radius / 2;
 const nb_rows = 2 * nb - 1;
 const nb_cols = nb
 
-var grad = 0 // variables d'icrémentation du garient
-var color_index = 0 // couleur de la case
-
-var pos = 0
+var pos = 0 // position dans la liste 'alive' (états)
 
 // grille des cases hexagonales
 let grid = new Array(nb_rows).fill().map(() => new Array(nb_cols).fill());
@@ -31,23 +25,23 @@ function setup() {
   // pour pas avoir le default canvas et pouvoir centrer le bouton
   
   colorMode(HSB, 360, 100, 100, 250)
-  //noLoop()
   frameRate(fr)
+  
   const button = select('#startButton'); // run quand on appuie sur le bouton
   button.mousePressed(() => {
     createCanvas(side, side);
     button.hide();
     start()
   });
-  count_cells()
+
   make_grid()
+  initiate()
 }
 
 function draw() {
   if (started){
     draw_grid()
     update_all()
-    //noLoop()
   }
 }
 
@@ -58,7 +52,7 @@ function start(){
 // pour dessiner un hexagone
 function draw_hex(hex) {
   const p = hex.points ;
-  noStroke()
+  stroke("white")
   if (hex.alive[pos]){
     fill("green")
   } else {
@@ -74,9 +68,6 @@ function draw_hex(hex) {
   vertex(p[5][0], p[5][1])
   endShape();
   
-  fill("white")
-  //text(update_cell(hex),hex.x,hex.y)
-  
 }
 
 function draw_grid(){
@@ -87,20 +78,6 @@ function draw_grid(){
       }
     });
   });
-}
-
-// pour compter le nombre de cells au total dans la grille
-// utile pour le gradient
-function count_cells() {
-  var cnt = 0;
-  grid.forEach(i => {
-    i.forEach(j => {
-      if (j !== undefined) {
-        cnt += 1
-      }
-    });
-  });
-  return cnt;
 }
 
 // pour obtenir les points d'un hexagone basé sur son centre
@@ -151,21 +128,21 @@ function make_grid() {
 
 // pour créer l'objet hexagone
 function make_hex(i, j) {
-  var x = (i + 1) * apo_thick
-  var y = apo_thick * 2 / sq3 + j * (apo_thick * 2 / sq3 + radius_thick2)
-  var alive = false ;
-  if (random()<0.025){
-    alive = true;
-  }
+  var x = (i + 1) * apo
+  var y = apo * 2 / sq3 + j * (apo * 2 / sq3 + radius2)
   return {
     i: i,
     j: j,
     x: x,
     y: y,
     links: [],
-    alive: [alive,false],
+    alive: [false,false],
     points: get_points(x,y)
   }
+}
+
+function initiate(){
+  //todo
 }
 
 function update_cell(cell){
@@ -175,7 +152,7 @@ function update_cell(cell){
       cnt +=1
     }
   });
-  if (cnt == 2){
+  if (cnt >= 2 && cnt < 5){
     cell.alive[(pos+1)%2]=true;
   } else {
     cell.alive[(pos+1)%2]=false;

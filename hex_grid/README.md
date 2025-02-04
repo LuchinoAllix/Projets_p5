@@ -1,6 +1,6 @@
 # Hex Grid
 
-Artwork n°1 pour le cours IFT IFT 6152 - Art Algorithmique
+Artwork n°1 pour le cours IFT 6152 - Art Algorithmique
 
 ## Inspiration
 

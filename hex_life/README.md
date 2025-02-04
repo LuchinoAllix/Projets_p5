@@ -24,7 +24,7 @@ max_nb_iteration = random(nb/2,nb) // nombre d'itération maximum
 
 Le nombre d'itération max est décidé dans la fonction `setup()` mais pour l'ignorer (code tourne sans fin) on peut supprimer `noLoop()` dans `draw()`
 
-Pour changer les régles du jeu : dans `initiate()` :
+Pour changer les régles du jeu : dans `update_cell()` :
 
 ```
 if (cell.alive[pos]){
@@ -45,6 +45,8 @@ if (cell.alive[pos]){
 Dans cette configuration :
 - une cellule vivante le reste si 2 ou 3 voisins sont vivants, meurt sinon
 - une cellule morte "revit" si 2 voisins sont vivant, reste morte sinon
+
+La partie générative se passe dans `initiate()`
 
 ## Result :
 

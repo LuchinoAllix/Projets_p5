@@ -1,6 +1,5 @@
 const side = 800; // w & h of canva
 const nb = 36 // number of hexagons in top line
-
 const fr = 5; // frame rate
 
 // Calcul des constantes géométriques
@@ -61,12 +60,13 @@ function start() {
 
 // pour dessiner un hexagone
 function draw_hex(hex) {
-  const p = hex.points;
 
-  //strokeWeight(2)
-  //stroke(colorStroke)
-  noStroke()
   if (hex.alive[pos]) {
+    
+    const p = hex.points;
+    
+    noStroke()
+
     fill(270+random(-30,30),90+random(-10,10),70+random(-10,10))
     
     beginShape();

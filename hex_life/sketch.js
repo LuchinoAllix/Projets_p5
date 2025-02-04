@@ -1,5 +1,5 @@
 const side = 800; // w & h of canva
-const nb = 36 // number of hexagons in top line
+const nb = 35 // number of hexagons in top line
 const fr = 5; // frame rate
 
 // Calcul des constantes géométriques
@@ -139,7 +139,7 @@ function make_grid() {
 // pour créer l'objet hexagone
 function make_hex(i, j) {
   var x = (i + 1) * apo
-  var y = apo * 2 / sq3 + j * (apo * 2 / sq3 + radius2)
+  var y = apo * 2 / sq3 + j * (apo * 2 / sq3 + radius2) + 50// offset pour centrer
   return {
     i: i,
     j: j,

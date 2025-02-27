@@ -21,10 +21,7 @@ const params = {
 };
 
 // variable pour données météo
-let data_set =  { time: "2025-02-20T19:00", interval: 900, temperature_2m: -7, relative_humidity_2m: 79, apparent_temperature: 49, is_day: 1, precipitation: 0, rain: 0, cloud_cover: 100, wind_speed_10m: 11.5, wind_direction_10m:302}
-
-const minTemp = -50;  // Température très froide
-const maxTemp = 50;   // Température très chaude
+let data_set =  { time: "2025-02-20T19:00", interval: 900, temperature_2m: 40, relative_humidity_2m: 79, apparent_temperature: 49, is_day: 1, precipitation: 0, rain: 0, cloud_cover: 100, wind_speed_10m: 11.5, wind_direction_10m:302}
 
 // w & h of canva
 const side = 800; 
@@ -40,13 +37,12 @@ function setup(){
 
 let nb_squares = 10
 let size_square = side / nb_squares
-let rec = 27
-let colors = ["black","white","purple"]
+let colors = ["black","white",getColorFromTemp(data_set.temperature_2m)]
 let index = 0
-let factor = 2.5
 
 function draw(){
 	background("white")
+
 	draw_big()
 }
 
@@ -62,17 +58,18 @@ function draw_squares(i,j){
 	let a = 0
 	let size_inner_square = size_square
 	index = 0
-	while (size_inner_square > 0){
 	let rx = random([0,1])
 	let ry = random([0,1])
-		let diff = [0,size_square-size_inner_square]
+
+	while (size_inner_square > 0){
+		let diff = size_square-size_inner_square
 		push()
-		translate(diff[rx],diff[ry])
+		translate(rx*diff,ry*diff)
 		fill(colors[index])
 		square(i,j,size_inner_square)
 		console.log(size_inner_square)
 		index = (index+1)%colors.length
-		size_inner_square = size_square-(random(1.05,1.15)*a)
+		size_inner_square = size_square-(random(2,2.5)*a)
 		a++
 		pop()
 	}
@@ -102,21 +99,27 @@ async function run(){
 
 function getColorFromTemp(temp) {
 	let H = 0
-	let S = 100
-	let B = 100
-	let x = temp + 50
-	if (x<50){
-		H = 250 - 0.9 * x 
-		B = 100 - x
-		S = 100 - x
-	} else {
-		H = 60 - temp -10
-		B = x
-		S = x 
+	let S = 0
+	let B = 50
+	if (temp>0){
+		S = 4*temp 
+	} else if(temp<0){
+		H = 245
+		S = -4*temp 
 	}
 	console.log(H)
     return [H,S,B]
 }
 
+function getDirFromAngle(angle){
+	if(angle<90 ){
+		return [1,0]
+	} else if(angle < 180){
+		return [1,1]
+	} else if(angle < 270){
+		return [0,1]
+	}
+	return [0,0]
+}
 
 //run()

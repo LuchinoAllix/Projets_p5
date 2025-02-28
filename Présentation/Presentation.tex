@@ -1,0 +1,109 @@
+\documentclass[xcolor={dvipsnames,svgnames}]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[frenchb]{babel}
+
+\usepackage{hyperref}
+\usepackage{graphicx}
+\graphicspath{ {./Images/} }
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{array}
+
+\usetheme{Madrid}
+
+%https://tex.stackexchange.com/questions/173853/how-to-customize-colors-of-a-beamer-presentation
+
+\setbeamercolor*{structure}{bg=PineGreen!20,fg=PineGreen}
+
+\setbeamercolor*{palette primary}{use=structure,fg=white,bg=structure.fg}
+\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=structure.fg!75}
+\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=structure.fg!50!black}
+\setbeamercolor*{palette quaternary}{fg=white,bg=black}
+
+\setbeamercolor{section in toc}{fg=black,bg=white}
+\setbeamercolor{alerted text}{use=structure,fg=structure.fg!50!black!80!black}
+
+\setbeamercolor{titlelike}{parent=palette primary,fg=structure.fg!50!black}
+\setbeamercolor{frametitle}{bg=gray!10!white,fg=PineGreen}
+
+\setbeamercolor*{titlelike}{parent=palette primary}
+
+\usefonttheme{serif}
+
+
+\title{Présentation d'article}
+\subtitle{Light Pattern: Writing Code with Photographs}
+\author{Luchino Allix-Lastrego}
+\institute{6251 - Art algorithmique}
+\date{DATE}
+
+\makeatletter
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.37\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+      \usebeamerfont{title in head/foot}\insertshorttitle  % Affiche le titre
+    \end{beamercolorbox}%
+	\begin{beamercolorbox}[wd=.26\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+		\usebeamerfont{author in head/foot}%
+		\ifx\insertsection\empty
+		Introduction
+		\else
+		  \insertsection  % Affiche la section actuelle
+		\fi
+	\end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.37\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}  % Affiche la date
+      \insertframenumber{} / \inserttotalframenumber  % Affiche le numéro de diapositive
+      \hspace*{2ex}
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+	\begin{center}
+		\includegraphics[scale=.075]{logo_diro.png}
+
+		\vspace{0.3cm}
+
+		Université de Montréal\\
+		Département d'informatique et de recherche opérationnelle\\
+
+	\end{center}
+\end{frame}
+
+\begin{frame}{Table des matières}
+	\tableofcontents
+\end{frame}
+
+\section{Introduction}
+\begin{frame}
+	\centering
+	\Large Introduction
+\end{frame}
+
+\begin{frame}{Introduction}
+	\begin{block}{blabla}
+		blabla
+	\end{block}
+
+	\hfill
+
+	
+	\begin{itemize}
+		\item blabla
+		\item blabla
+	\end{itemize}
+\end{frame}
+
+
+\end{document}

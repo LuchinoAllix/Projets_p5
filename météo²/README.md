@@ -42,14 +42,14 @@ Le code se compose en différentes sections :
 - ` ~ FONCTIONS DESSIN ~ ` :  Les fonctions pour dessiner les formes :
 	```javascript
 	async function draw_big(){...}
-	function draw_squares(...){...}
+	function draw_squares(i,j,angle,temp){...}
 	function getColorFromTemp(temp){...}
 	function getDirFromAngle(angle){...}
 
 	```
 - ` ~ FONCTIONS REQUETE ~ ` : Les fonctions pour faire des requêtes à l'api
 	```javascript
-	function makeURL(...){...}
+	function makeURL(url,lat,long,params){...}
 	function getData(url){...}
 	```
 

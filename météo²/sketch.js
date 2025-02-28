@@ -26,14 +26,11 @@ let index = 0 // pour avancer dans les couleurs
 
 function setup(){
 	createCanvas(side, side);
-  	noLoop()
 	colorMode(HSB, 360, 100, 100, 250)
-}
-
-function draw(){
 	background("white")
 	draw_big()
 }
+
 
 /* ~ FONCTIONS DESSIN ~ */
 

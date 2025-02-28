@@ -37,7 +37,6 @@ Le code se compose en différentes sections :
 - ` ~ FONCTIONS P5 ~ ` : Les fonction requise pour `P5` :
 	```javascript
 	function setup(){...}
-	function draw(){...}
 	```
 
 - ` ~ FONCTIONS DESSIN ~ ` :  Les fonctions pour dessiner les formes :
